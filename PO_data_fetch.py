@@ -91,7 +91,8 @@ def fetch_purchase_orders(uid, company_id):
                 "price_subtotal": {},                                    # Order Lines/Subtotal
                 "state":{"fields": {"display_name": {}}}
             }
-        }
+        },
+        "is_received": {}
     }
 
     offset, batch_size = 0, 2000
@@ -150,6 +151,7 @@ def flatten_purchase_orders(records):
                 "Total Quantity": line.get("product_uom_qty", 0),
                 "Subtotal": line.get("price_subtotal", 0),
                 "Status": safe_str(line.get("state")),
+                "Receive Status": safe_str(rec.get("is_received"))
                 
             })
     return pd.DataFrame(flat)
@@ -164,14 +166,14 @@ def paste_to_gsheet(df, sheet_name):
             return
 
         # Clear range A:N (14 columns)
-        worksheet.batch_clear(["A:Q"])
+        worksheet.batch_clear(["A:R"])
 
         # Paste the dataframe starting from A1
         set_with_dataframe(worksheet, df, include_index=False, include_column_header=True)
 
         # Add timestamp to O1
         local_time = datetime.now(pytz.timezone("Asia/Dhaka")).strftime("%Y-%m-%d %H:%M:%S")
-        worksheet.update("R1", [[f"Last Updated: {local_time}"]])
+        worksheet.update("S1", [[f"Last Updated: {local_time}"]])
 
         print(f"✅ Data pasted to {sheet_name} and timestamp updated in O1")
     except Exception as e:
