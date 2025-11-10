@@ -2,9 +2,9 @@
 name: Odoo → Google Sheet Sync
 
 on:
-  # schedule:
-  #   # Runs every 6 hours
-  #   - cron: "0 */6 * * *"
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */2 * * *'
   workflow_dispatch:  # allows manual trigger from GitHub UI
 
 jobs:
